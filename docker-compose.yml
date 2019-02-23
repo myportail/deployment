@@ -1,0 +1,33 @@
+version: '2'
+services:
+  authdb:
+    image: 'bitnami/mongodb:latest'
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGODB_USERNAME=authService
+      - MONGODB_PASSWORD=igQFUwjZZyxgken7gcKg*gTu
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password123
+      - MONGODB_ROOT_PASSWORD=password123
+      - MONGODB_DATABASE=authdb
+    networks:
+      - authService
+    volumes:
+      - auth-data:/bitnami
+  auth-service:
+    depends_on:
+      - 'authdb'
+    image: 'cobreti/myportail-auth-service:latest'
+    working_dir: /authService
+    entrypoint: ["dotnet", "authService.dll"]
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    networks:
+      - authService
+    ports:
+      - "8001:8001"
+volumes:
+  auth-data:
+networks:
+  authService:
