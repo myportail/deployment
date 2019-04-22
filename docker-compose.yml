@@ -1,9 +1,14 @@
-version: '2'
+version: '3.7'
 services:
+
+  #
+  # authentication Database
+  #
   authdb:
     image: 'bitnami/mongodb:latest'
     ports:
       - "27017:27017"
+    container_name: authdb
     environment:
       - MONGODB_USERNAME=authService
       - MONGODB_PASSWORD=igQFUwjZZyxgken7gcKg*gTu
@@ -15,19 +20,58 @@ services:
       - authService
     volumes:
       - auth-data:/bitnami
+
+  #
+  # authentication service
+  #
   auth-service:
     depends_on:
-      - 'authdb'
-    image: 'cobreti/myportail-auth-service:latest'
+      - authdb
+    image: cobreti/myportail-auth-service
+    container_name: authservice
     working_dir: /authService
     entrypoint: ["dotnet", "authService.dll"]
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
     networks:
-      - authService
+      - auth-db_authService
+      - portail
     ports:
       - "8001:8001"
+
+  #
+  # portail
+  #
+  portail:
+    image: cobreti/myportail-portail
+    container_name: portail
+    working_dir: /server
+    entrypoint: ["node", "server.js"]
+    networks:
+      - portail
+    ports:
+      - "8002:8002"
+
+  #
+  # application gateway
+  #
+  appgateway:
+    depends_on:
+      - portail
+      - auth-service
+    image: cobreti/myportail-appgateway
+    container_name: appgateway
+    environment:
+      - ENVIRONMENT_NAME=docker
+    working_dir: /server
+    entrypoint: ["node", "app/appgateway.js"]
+    networks:
+      - portail
+    ports:
+      - "8000:8000"
+
 volumes:
   auth-data:
 networks:
   authService:
+  portail:
