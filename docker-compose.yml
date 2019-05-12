@@ -1,4 +1,4 @@
-version: '3.7'
+version: '2.0'
 services:
 
   #
@@ -70,7 +70,7 @@ services:
     networks:
       - portail
     ports:
-      - "8000:8000"
+      - "8000:80"
 
 volumes:
   auth-data:
