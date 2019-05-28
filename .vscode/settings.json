@@ -1,0 +1,3 @@
+{
+    "docker-compose.projectNames": ["deployement", "myportail"],
+}

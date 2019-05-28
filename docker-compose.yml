@@ -6,8 +6,8 @@ services:
   #
   authdb:
     image: 'bitnami/mongodb:latest'
-    # ports:
-    #   - "27017:27017"
+    ports:
+      - "27017:27017"
     container_name: authdb
     environment:
       - MONGODB_USERNAME=authService

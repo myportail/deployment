@@ -1,15 +1,22 @@
-apiVersion: v1
-kind: Service
+     
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: authservice
-  labels:
-    app: myportail
+  name: myportail-auth
 spec:
-  type: NodePort
-  ports:
-    - port: 8001
-      name: web
-      targetPort: 8001
   selector:
-    app: myportail
-    service: auth
+    matchLabels:
+      app: myportail
+  template:
+    metadata:
+      labels:
+        app: myportail
+        service: auth
+    spec:
+      containers:
+        - name: auth
+          image: cobreti/myportail-auth-service:latest
+          workingDir: /authService
+          command: ["dotnet", "authService.dll"]
+          ports:
+            - containerPort: 8001

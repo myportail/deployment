@@ -1,15 +1,34 @@
-apiVersion: v1
-kind: Service
+     
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: authdbservice
-  labels:
-    app: myportail
+  name: myportail-authdb
 spec:
-  type: NodePort
-  ports:
-    - port: 27017
-      name: mongodb
-      targetPort: 27017
   selector:
-    app: myportail
-    service: authdb
+    matchLabels:
+      app: myportail
+  template:
+    metadata:
+      labels:
+        app: myportail
+        service: authdb
+    spec:
+      containers:
+        - name: authdb
+          image: bitnami/mongodb:latest
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGODB_USERNAME
+              value: authService
+            - name: MONGODB_PASSWORD
+              value: igQFUwjZZyxgken7gcKg*gTu
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: root
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: password123
+            - name: MONGODB_ROOT_PASSWORD
+              value: password123
+            - name: MONGODB_DATABASE
+              value: authdb
+
