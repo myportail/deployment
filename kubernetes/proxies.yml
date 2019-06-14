@@ -49,3 +49,21 @@ spec:
   selector:
     app: myportail
     service: portail
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: appgatewayproxy
+  labels:
+    app: myportail
+spec:
+  type: NodePort
+  ports:
+    - port: 8000
+      name: appgateway
+      targetPort: 8000
+  selector:
+    app: myportail
+    service: appgateway
