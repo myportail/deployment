@@ -7,9 +7,9 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 27017
-      name: mongodb
-      targetPort: 27017
+    - port: 3306
+      name: mariadb
+      targetPort: 3306
   selector:
     app: myportail
     service: authdb
@@ -67,3 +67,21 @@ spec:
   selector:
     app: myportail
     service: appgateway
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: apiumbrellaproxy
+  labels:
+    app: apiumbrella
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      name: apiumbrella
+      targetPort: 80
+  selector:
+    app: myportail
+    service: apiumbrella
