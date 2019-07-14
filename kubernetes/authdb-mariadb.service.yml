@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myportail-authdb
+spec:
+  selector:
+    matchLabels:
+      app: myportail
+  template:
+    metadata:
+      labels:
+        app: myportail
+        service: authdb
+    spec:
+      volumes:
+        - name: authdbstorage
+          persistentVolumeClaim:
+            claimName: authdbstorage-claim      
+      containers:
+        - name: authdb
+          image: mariadb:latest
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - mountPath: "/var/lib/mysql"
+              name: authdbstorage
+          env:
+            - name: MYSQL_USER
+              value: authService
+            - name: MYSQL_PASSWORD
+              value: igQFUwjZZyxgken7gcKg*gTu
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: root
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: password123
+            - name: MYSQL_ROOT_PASSWORD
+              value: password123
+            - name: MONGODB_DATABASE
+              value: authdb

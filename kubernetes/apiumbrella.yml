@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myportail-apiumbrella
+spec:
+  selector:
+    matchLabels:
+      app: myportail
+  template:
+    metadata:
+      labels:
+        app: myportail
+        service: apiumbrella
+    spec:
+      containers:
+        - name: apiumbrella
+          image: nrel/api-umbrella:latest
+          # ports:
+            # - containerPort: 80
+              
