@@ -3,6 +3,8 @@ kind: PersistentVolume
 metadata:
   name: authdbstorage
 spec:
+  persistentVolumeReclaimPolicy: 
+    retain
   accessModes:
     - ReadWriteOnce
   capacity:

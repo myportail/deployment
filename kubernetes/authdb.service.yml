@@ -37,3 +37,10 @@ spec:
               value: password123
             - name: MONGODB_DATABASE
               value: authdb
+      initContainers:
+        - name: authdb-perm-fix
+          image: busybox
+          command: ["/bin/chmod","-R","777", "/data"]
+          volumeMounts:
+            - name: authdbstorage
+              mountPath: /data
