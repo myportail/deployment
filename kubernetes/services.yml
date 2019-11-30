@@ -11,6 +11,10 @@ spec:
       name: mariadb
       targetPort: 3306
       nodePort: 30000
+    - port: 22
+      name: ssh
+      targetPort: 22
+      nodePort: 30001
   selector:
     app: myportail
     service: authdb

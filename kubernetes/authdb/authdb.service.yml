@@ -15,7 +15,7 @@ spec:
       volumes:
         - name: authdbstorage
           persistentVolumeClaim:
-            claimName: authdbstorage-claim      
+            claimName: authdbstorage-claim
       containers:
         - name: authdb
           image: bitnami/mongodb:latest

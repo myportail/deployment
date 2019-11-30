@@ -11,32 +11,33 @@ spec:
       labels:
         app: myportail
         service: authdb
+        tags: mariadb
     spec:
       volumes:
         - name: authdbstorage
           persistentVolumeClaim:
-            claimName: authdbstorage-claim      
+            claimName: authdbstorage-claim
+        - name: mysql-initdb
+          configMap:
+            name: mysql-initdb-config
       containers:
         - name: authdb
           image: mariadb:latest
           ports:
             - containerPort: 3306
+            - containerPort: 22
           volumeMounts:
-            - mountPath: "/var/lib/mysql"
-              name: authdbstorage
+            - name: authdbstorage
+              mountPath: "/var/lib/mysql"
+            - name: mysql-initdb
+              mountPath: /docker-entrypoint-initdb.d
           env:
             - name: MYSQL_USER
               value: authService
             - name: MYSQL_PASSWORD
               value: igQFUwjZZyxgken7gcKg*gTu
-            - name: MONGO_INITDB_ROOT_USERNAME
-              value: root
-            - name: MONGO_INITDB_ROOT_PASSWORD
-              value: password123
             - name: MYSQL_ROOT_PASSWORD
               value: password123
-            - name: MONGODB_DATABASE
-              value: authdb
       initContainers:
         - name: authdb-perm-fix
           image: busybox
