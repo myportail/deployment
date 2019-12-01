@@ -5,4 +5,6 @@ resources:
   - authdb.storage.do.yaml
   - authdb.configmap.yaml
   - authdb-mariadb.service.yaml
+  - service.yaml
+
 
