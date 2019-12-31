@@ -5,6 +5,7 @@ bases:
 - ../base
 
 resources:
+  - secrets.yaml
   - deployment.yaml
 
 namespace: "myportail"

@@ -23,6 +23,10 @@ spec:
       containers:
         - name: authdb
           image: mariadb:latest
+          resources:
+            limits:
+              memory: "250M"
+              cpu: "0.5"
           ports:
             - containerPort: 3306
           volumeMounts:
@@ -32,11 +36,23 @@ spec:
               mountPath: /docker-entrypoint-initdb.d
           env:
             - name: MYSQL_USER
-              value: authService
+              valueFrom:
+                secretKeyRef:
+                  name: authdbsecrets
+                  key: mysqlusername
+              # value: authService
             - name: MYSQL_PASSWORD
-              value: igQFUwjZZyxgken7gcKg*gTu
+              valueFrom:
+                secretKeyRef:
+                  name: authdbsecrets
+                  key: mysqlpassword
+              # value: igQFUwjZZyxgken7gcKg*gTu
             - name: MYSQL_ROOT_PASSWORD
-              value: password123
+              valueFrom:
+                  secretKeyRef:
+                    name: authdbsecrets
+                    key: mysqlrootpassword
+              # value: password123
       initContainers:
         - name: authdb-perm-fix
           image: busybox
