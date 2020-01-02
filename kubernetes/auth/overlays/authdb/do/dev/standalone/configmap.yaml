@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb-config
+data:
+  initdb.sql: |
+    CREATE DATABASE Test3;
+    USE Test3;
+    GRANT ALL PRIVILEGES ON Test3.* TO 'authservice'@'%';
+    CREATE TABLE friends (id INT, name VARCHAR(256), age INT, gender VARCHAR(3));
