@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myportail-database
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: myportail
+  template:
+    metadata:
+      labels:
+        app: myportail
+        service: database
+        tags: mariadb
+    spec:
+      volumes:
+        - name: dbstorage
+          persistentVolumeClaim:
+            claimName: dbstorage-claim
+        - name: mysql-initdb
+          configMap:
+            name: mysql-initdb-config
+      containers:
+        - name: database
+          image: mariadb:latest
+          resources:
+            limits:
+              memory: "500M"
+              cpu: " 0.1"
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: dbstorage
+              mountPath: "/var/lib/mysql"
+            - name: mysql-initdb
+              mountPath: /docker-entrypoint-initdb.d
+          env:
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: dbsecrets
+                  key: db.connection.user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dbsecrets
+                  key: db.connection.password
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                  secretKeyRef:
+                    name: dbsecrets
+                    key: db.connection.rootpassword
+      restartPolicy: Always
+      initContainers:
+        - name: db-perm-fix
+          image: busybox
+          command: ["/bin/chmod","-R","777", "/data"]
+          volumeMounts:
+            - name: dbstorage
+              mountPath: /data
