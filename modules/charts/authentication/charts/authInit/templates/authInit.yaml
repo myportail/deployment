@@ -1,0 +1,43 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myportail-authinit
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: myportail
+  template:
+    metadata:
+      labels:
+        app: myportail
+        service: authenticationinit
+        version: {{ .Values.version }}
+    spec:
+      containers:
+        - name: authenticationinit
+          image: myportail/authentication-init:{{.Values.version}}
+          workingDir: /authInit
+          command: ["dotnet", "authInit.dll"]
+          env:
+            - name: authdb__connection__user
+              valueFrom:
+                secretKeyRef:
+                  name: authdbsecrets
+                  key: authdb.connection.user
+            - name: authdb__connection__password
+              valueFrom:
+                secretKeyRef:
+                  name: authdbsecrets
+                  key: authdb.connection.password
+            - name: defaultuser__username
+              valueFrom:
+                secretKeyRef:
+                  name: defaultuser-secrets
+                  key: defaultuser.username
+            - name: defaultuser__password
+              valueFrom:
+                secretKeyRef:
+                  name: defaultuser-secrets
+                  key: defaultuser.password

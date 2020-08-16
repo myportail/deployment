@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myportail-auth
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: myportail
+  template:
+    metadata:
+      labels:
+        app: myportail
+        service: auth
+        version: {{ .Values.version }}
+    spec:
+      containers:
+        - name: auth
+          image: myportail/auth-service:{{.Values.version}}
+          workingDir: /authService
+          command: ["dotnet", "authService.dll"]
+          resources:
+            limits:
+              memory: "100M"
+              cpu: "0.1"
+          ports:
+            - containerPort: 80
+            - containerPort: 443
+          env:
+            - name: Swagger__RoutePrefix
+              value: /authentication
+            - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+              value: authservice
+            - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+              value: localhost.pfx
+            - name: authdb__connection__user
+              valueFrom:
+                secretKeyRef:
+                  name: authdbsecrets
+                  key: authdb.connection.user
+            - name: authdb__connection__password
+              valueFrom:
+                secretKeyRef:
+                  name: authdbsecrets
+                  key: authdb.connection.password
+      restartPolicy: Always
