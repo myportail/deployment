@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-loki
+  namespace: default
+  annotations:
+    ingress.kubernetes.io/secure-backends: "false"
+    ingress.kubernetes.io/proxy-read-timeout: "3600"
+    ingress.kubernetes.io/proxy-send-timeout: "3600"
+    ingress.kubernetes.io/enable-rewrite-log: 'true'
+    ingress.kubernetes.io/proxy-pass-request-headers: 'true'
+    ingress.kubernetes.io/rewrite-target: /$1
+    ingress.kubernetes.io/service-upstream: 'true'
+    ingress.kubernetes.io/use-regex: 'true'
+    ingress.kubernetes.io/websocket-services: core-service
+    ingress.kubernetes.io/enable-ssl-passthrough: 'true'
+spec:
+  rules:
+    - host: grafana.minikube.local
+      http:
+        paths:
+          - path: /($1)
+            backend:
+              serviceName: monitoring-grafana
+              servicePort: 80
+          - path: /
+            backend:
+              serviceName: monitoring-grafana
+              servicePort: 80
+    - host: prometheus.minikube.local
+      http:
+        paths:
+          - path: /($1)
+            backend:
+              serviceName: monitoring-prometheus-server
+              servicePort: 80
+          - path: /
+            backend:
+              serviceName: monitoring-prometheus-server
+              servicePort: 80

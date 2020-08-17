@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-dashboard
+  namespace: kubernetes-dashboard
+  annotations:
+    ingress.kubernetes.io/secure-backends: "true"
+    ingress.kubernetes.io/proxy-read-timeout: "3600"
+    ingress.kubernetes.io/proxy-send-timeout: "3600"
+    ingress.kubernetes.io/enable-rewrite-log: 'true'
+    ingress.kubernetes.io/proxy-pass-request-headers: 'true'
+    ingress.kubernetes.io/rewrite-target: /$1
+    ingress.kubernetes.io/service-upstream: 'true'
+    ingress.kubernetes.io/use-regex: 'true'
+    ingress.kubernetes.io/websocket-services: core-service
+    ingress.kubernetes.io/enable-ssl-passthrough: 'true'
+spec:
+  tls:
+    - hosts: 
+        - {{ .Values.dashboardUrls.dev }}
+        # - dashboard.minikube.local
+      secretName: tls-secret
+  rules:
+    - host: {{ .Values.dashboardUrls.dev }}
+      http:
+        paths:
+          - path: /($1)
+            backend:
+              serviceName: kubernetes-dashboard
+              servicePort: 80
+          - path: /
+            backend:
+              serviceName: kubernetes-dashboard
+              servicePort: 80
